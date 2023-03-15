@@ -4,22 +4,30 @@ import os
 
 class Game:
 
-    def __init__(self):
+    def __init__(self, state_dict, start_state):
         self.screen = pygame.display.get_surface()
         self.clock = pygame.time.Clock()
+        self.state_dict = state_dict
+        self.state = state_dict[start_state]
+        self.keys = pygame.key.get_pressed()
 
-    def run(self, state):
+    def update(self):
+        if self.state.finished:
+            next_state = self.state.next
+            self.state.finished = False
+            self.state = self.state_dict[next_state]
+        self.state.update(self.screen, self.keys)
+
+    def run(self):
         while True:
+            self.keys = pygame.key.get_pressed()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.display.quit()
-                if event.type == pygame.K_DOWN:
-                    self.key = pygame.key.get_pressed()
-                if event.type == pygame.K_UP:
-                    self.key = pygame.key.get_pressed()
-            state.update(self.screen)
+            self.update()
             pygame.display.update()
-            self.clock.tick(10)
+            self.clock.tick(60)
+
 
 
 def load_graphics(path, accept=('.jpg', '.png', 'gif', 'bmp')):
@@ -40,6 +48,5 @@ def get_image(sheet, x, y, width, height, colorkey, scale):
     image = pygame.Surface((width, height))
     image.blit(sheet, (0, 0), (x, y, width, height))
     image.set_colorkey(colorkey)
-    image = pygame.transform.scale(image, (int(width*scale), int(height*scale)))
+    image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
     return image
-
