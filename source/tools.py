@@ -16,7 +16,10 @@ class Game:
             next_state = self.state.next
             self.state.finished = False
             self.state = self.state_dict[next_state]
-        self.state.update(self.screen, self.keys)
+        self.state.update(self.keys)
+
+    def draw(self):
+        self.state.draw(self.screen)
 
     def run(self):
         while True:
@@ -25,9 +28,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     pygame.display.quit()
             self.update()
+            self.draw()
             pygame.display.update()
             self.clock.tick(60)
-
 
 
 def load_graphics(path, accept=('.jpg', '.png', 'gif', 'bmp')):
